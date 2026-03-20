@@ -576,25 +576,25 @@ window.renderGalleryHTML = function () {
                 <p class="text-xs text-slate-400 mt-2 uppercase">Ходов: ${p.story.length}</p>
             </div>
             ${canDelete ? `<button onclick="deleteFromGallery(${originalIndex})" class="absolute top-4 right-4 text-slate-500 hover:scale-110 transition-transform" title="Сжечь свиток">
-                <img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">🗑</span>️.png" class="w-5 h-5 object-contain" onerror="this.outerHTML='<span class=\\'text-xl\\'><span class="icon-placeholder" data-icon="icon-unknown">🗑</span>️</span>'">
+                ${window.iconImg('🗑️', 'w-5 h-5 object-contain')}
             </button>` : ''}
             <div class="flex justify-between items-center mb-4">
                 <span class="text-xs text-amber-500 font-bold truncate pr-2">Лорд: ${safeAuthor}</span>
                 <div class="flex gap-3 text-sm">
                     <button onclick="toggleReaction(${originalIndex}, 'like')" class="${window.userLikes[uId] === 1 ? 'opacity-100' : 'opacity-50'} hover:opacity-100 transition-opacity flex items-center gap-1">
-                        <img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">♥</span>️.png" class="w-4 h-4 object-contain" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">♥</span>️</span>'"> ${likesCount}
+                        ${window.iconImg('♥️', 'w-4 h-4 object-contain')} ${likesCount}
                     </button>
                     <button onclick="toggleReaction(${originalIndex}, 'dislike')" class="${window.userLikes[uId] === -1 ? 'opacity-100' : 'opacity-50'} hover:opacity-100 transition-opacity flex items-center gap-1">
-                        <img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">💔</span>.png" class="w-4 h-4 object-contain" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">💔</span></span>'"> ${dislikesCount}
+                        ${window.iconImg('💔', 'w-4 h-4 object-contain')} ${dislikesCount}
                     </button>
                 </div>
             </div>
             <div class="flex gap-3">
                 <button onclick="if(typeof playCustomScenario === 'function') playCustomScenario(${originalIndex})" class="flex-1 bg-sky-600 hover:bg-sky-500 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors text-white flex items-center justify-center gap-2 shadow-lg">
-                    <img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">👁</span>️.png" class="w-5 h-5" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">👁</span>️</span>'"> ${t('read')}
+                    ${window.iconImg('👁️', 'w-5 h-5')} ${t('read')}
                 </button>
                 <button onclick="if(typeof downloadFromGallery === 'function') downloadFromGallery(${originalIndex})" class="bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-xl transition-colors shadow-lg flex items-center justify-center" title="Забрать в архив">
-                    <img src="Visualization/<span class="icon-placeholder" data-icon="disk">💾</span>.png" class="w-5 h-5 object-contain" onerror="this.outerHTML='<span class=\\'text-base text-white\\'><span class="icon-placeholder" data-icon="disk">💾</span></span>'">
+                    ${window.iconImg('💾', 'w-5 h-5 object-contain')}
                 </button>
             </div>
         </div>`;
