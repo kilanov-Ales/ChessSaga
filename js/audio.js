@@ -74,7 +74,16 @@ class AudioManager {
 
         if (window.vfxManager) window.vfxManager.start();
 
-        // Start in ambient mode (menu)
+        // ── Start ambient background track in parallel ──────────────────────────────
+        const ambTrack = this._pickRandom(MUSIC_CATALOG.ambient, null);
+        this.loadTrack(ambTrack).then(url => {
+            this.channels.ambient.src = url;
+            this.channels.ambient.loop = true;
+            this.channels.ambient.volume = this._targetMusicVol() * 0.15;
+            this.channels.ambient.play().catch(e => console.warn('[AudioManager] Ambient play failed', e));
+        });
+
+        // Start in ambient mode (menu) -> no active soundtrack
         this.playStateAmbient();
     }
 
@@ -82,13 +91,12 @@ class AudioManager {
     // PUBLIC STATE METHODS — these are what game.js calls
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Menu, Forge, Scroll Hall — random ambient track, 2 s crossfade */
+    /** Menu, Forge, Scroll Hall — just ambient noise, fade out music */
     playStateAmbient() {
         if (!this.initialized || this.isStoppedAll) return;
         if (this.currentMusicState === 'ambient') return;   // already ambient
         this.currentMusicState = 'ambient';
-        const track = this._pickRandom(MUSIC_CATALOG.ambient, this.currentMusicPath);
-        this.crossfadeTo(track, 2000);
+        this.crossfadeTo(null, 2000); // fade out music
     }
 
     /** Game started — random battle track, 2 s crossfade */
@@ -177,8 +185,28 @@ class AudioManager {
 
         this._killFades('music');
         
-        const srcUrl = await this.loadTrack(newTrackPath);
-        if (this.currentMusicPath !== newTrackPath) return;
+        let srcUrl = null;
+        if (newTrackPath) {
+            srcUrl = await this.loadTrack(newTrackPath);
+            if (this.currentMusicPath !== newTrackPath) return;
+        }
+
+        // Fade out to silence
+        if (!newTrackPath) {
+             const startVol = ch.volume;
+             let s = 0;
+             this._fades['music_out'] = setInterval(() => {
+                 s++;
+                 ch.volume = Math.max(0, startVol * (1 - s / STEPS));
+                 if (s >= STEPS) {
+                     clearInterval(this._fades['music_out']);
+                     this._fades['music_out'] = null;
+                     ch.pause();
+                     ch.src = '';
+                 }
+             }, stepMs);
+             return;
+        }
 
         // Nothing playing yet — start immediately at target volume
         if (ch.paused || !ch.src) {
@@ -284,7 +312,7 @@ class AudioManager {
         if (!this._fades['music_out'] && !this._fades['music_in']) {
             this.channels.music.volume = mv;
         }
-        this.channels.ambient.volume = mv;    // legacy channel
+        this.channels.ambient.volume = mv * 0.15; // LOW VOLUME PARALLEL AMBIENT
         this.channels.sfx.volume     = this.baseMusicVolume;
         this.channels.voice.volume   = this.voiceVolume;
         if (this.voiceGainBox) this.voiceGainBox.gain.value = this.voiceVolume;
