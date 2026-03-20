@@ -271,12 +271,7 @@ class TutorialManager {
 
         // Handle Action
         this.nextBtn.classList.remove("visible");
-        if (step.action === "click" && this.highlightedElement) {
-            this.clickListener = (e) => {
-                this.nextStep();
-            };
-            this.highlightedElement.addEventListener("click", this.clickListener, { once: true });
-        } else if (step.action === "next") {
+        if (step.action === "next") {
             // Wait for typewriter to finish to show Next button, handled in _finishTypewriter
         } else if (step.action === "expectedMove") {
             // Waiting for checkMove call
@@ -296,6 +291,14 @@ class TutorialManager {
                 const currentPos = window.getComputedStyle(el).position;
                 if (currentPos === "static") {
                     el.style.position = "relative";
+                }
+                
+                // BUGFIX: Attach click listener AFTER element is found
+                if (this.currentStep && this.currentStep.action === "click") {
+                    this.clickListener = (e) => {
+                        this.nextStep();
+                    };
+                    this.highlightedElement.addEventListener("click", this.clickListener, { once: true });
                 }
             } else {
                 console.warn("TutorialManager: Element not found for selector: " + selector);
