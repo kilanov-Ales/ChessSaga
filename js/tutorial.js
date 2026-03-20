@@ -146,19 +146,17 @@ class TutorialManager {
         this.overlay.className = "tutorial-overlay";
         document.body.appendChild(this.overlay);
 
-        // Create Dialog Container
+        // Character Sprite (Lily VN style, full height on the left)
+        this.character = document.createElement("img");
+        this.character.className = "tutorial-character";
+        this.portrait = this.character; // Alias to avoid breaking existing logic
+        document.body.appendChild(this.character);
+
+        // Create Dialog Container (Bottom wide bar)
         this.dialog = document.createElement("div");
         this.dialog.className = "tutorial-dialog";
 
-        // Portrait
-        const portraitCont = document.createElement("div");
-        portraitCont.className = "tutorial-portrait-container";
-        this.portrait = document.createElement("img");
-        this.portrait.className = "tutorial-portrait";
-        portraitCont.appendChild(this.portrait);
-        this.dialog.appendChild(portraitCont);
-
-        // Content Area
+        // Content Area 
         const contentArea = document.createElement("div");
         contentArea.className = "tutorial-content";
 
@@ -197,6 +195,7 @@ class TutorialManager {
         this.currentStepIndex = 0;
         this.overlay.classList.add("active");
         this.dialog.classList.add("active");
+        if (this.character) this.character.classList.add("active");
 
         this._renderStep();
     }
@@ -206,6 +205,7 @@ class TutorialManager {
         this.currentStepIndex = -1;
         this.overlay.classList.remove("active");
         this.dialog.classList.remove("active");
+        if (this.character) this.character.classList.remove("active");
         this._clearHighlight();
         this._clearListeners();
 

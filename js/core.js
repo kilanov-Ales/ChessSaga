@@ -474,7 +474,11 @@ window.saveNickname = async function () {
 
 window.openSettings = function () { updateNicknameDisplay(); document.getElementById('settings-modal').classList.remove('hidden'); }
 window.closeSettings = function () { document.getElementById('settings-modal').classList.add('hidden'); }
-window.openGuide = function () { document.getElementById('guide-modal').classList.remove('hidden'); }
+window.openGuide = function () {
+    if (window.tutorialManager) {
+        window.tutorialManager.start();
+    }
+};
 window.closeGuide = function () { document.getElementById('guide-modal').classList.add('hidden'); }
 
 let chatPollInterval;

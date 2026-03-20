@@ -4,11 +4,8 @@ const audioFolderPath = "audio/";
 // Music catalog
 // ─────────────────────────────────────────────────────────────────────────────
 const MUSIC_CATALOG = {
-    ambient: [
-        'Ambient/Base Ambient (1).mp3',
-        'Ambient/Base Ambient (2).mp3',
-        'Ambient/Base Ambient (3).mp3',
-        'Ambient/Base-Ambient-_1_.mp3'
+    menu: [
+        'Soundtrack/Soundtrack.mp3'
     ],
     battle: [
         'Soundtrack/Soundtrack.mp3',
@@ -16,7 +13,6 @@ const MUSIC_CATALOG = {
         'Soundtrack/Soundtrack (3).mp3'
     ],
     tension: [
-        'Ambient/Frightening environment.mp3',
         'Soundtrack/Epic soundtrack.mp3'
     ],
     climax: 'Soundtrack/End of soundtrack.mp3'
@@ -29,16 +25,14 @@ class AudioManager {
     constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // Four independent HTML5 Audio channels
+        // Three independent HTML5 Audio channels
         this.channels = {
             music:   new Audio(),
-            ambient: new Audio(),    // kept for legacy calls from outside
             sfx:     new Audio(),
             voice:   new Audio()
         };
 
         this.channels.music.loop   = true;
-        this.channels.ambient.loop = true;
 
         // Volume settings read from localStorage (fallback to 0.5)
         this.baseMusicVolume = parseFloat(
@@ -74,16 +68,7 @@ class AudioManager {
 
         if (window.vfxManager) window.vfxManager.start();
 
-        // ── Start ambient background track in parallel ──────────────────────────────
-        const ambTrack = this._pickRandom(MUSIC_CATALOG.ambient, null);
-        this.loadTrack(ambTrack).then(url => {
-            this.channels.ambient.src = url;
-            this.channels.ambient.loop = true;
-            this.channels.ambient.volume = this._targetMusicVol() * 0.15;
-            this.channels.ambient.play().catch(e => console.warn('[AudioManager] Ambient play failed', e));
-        });
-
-        // Start in ambient mode (menu) -> no active soundtrack
+        // Start in menu mode -> start soundtrack
         this.playStateAmbient();
     }
 
@@ -91,12 +76,13 @@ class AudioManager {
     // PUBLIC STATE METHODS — these are what game.js calls
     // ══════════════════════════════════════════════════════════════════════════
 
-    /** Menu, Forge, Scroll Hall — just ambient noise, fade out music */
+    /** Menu, Forge, Scroll Hall — menu soundtrack */
     playStateAmbient() {
         if (!this.initialized || this.isStoppedAll) return;
         if (this.currentMusicState === 'ambient') return;   // already ambient
         this.currentMusicState = 'ambient';
-        this.crossfadeTo(null, 2000); // fade out music
+        const track = this._pickRandom(MUSIC_CATALOG.menu, this.currentMusicPath);
+        this.crossfadeTo(track, 2000); 
     }
 
     /** Game started — random battle track, 2 s crossfade */
@@ -312,7 +298,6 @@ class AudioManager {
         if (!this._fades['music_out'] && !this._fades['music_in']) {
             this.channels.music.volume = mv;
         }
-        this.channels.ambient.volume = mv * 0.15; // LOW VOLUME PARALLEL AMBIENT
         this.channels.sfx.volume     = this.baseMusicVolume;
         this.channels.voice.volume   = this.voiceVolume;
         if (this.voiceGainBox) this.voiceGainBox.gain.value = this.voiceVolume;
