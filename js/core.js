@@ -358,10 +358,29 @@ function updateNicknameDisplay() {
 window.myAuthorId = localStorage.getItem('chess_saga_author_id');
 window.myNickname = localStorage.getItem('chess_saga_nickname');
 
-window.addEventListener('DOMContentLoaded', () => {
+// Called when user picks a language from the first-run screen
+window.selectLanguage = function(lang) {
+    localStorage.setItem('chess_saga_lang', lang);
+    currentLang = lang;
     window.applyTranslations();
     window.updateScenariosLanguage();
 
+    const modal = document.getElementById('lang-select-modal');
+    if (modal) {
+        modal.style.transition = 'opacity 0.4s ease';
+        modal.style.opacity = '0';
+        setTimeout(() => { modal.style.display = 'none'; }, 400);
+    }
+
+    // Also sync the lang selector in settings if present
+    const sel = document.getElementById('lang-selector');
+    if (sel) sel.value = lang;
+
+    // Continue normal boot after language is chosen
+    window._continueBootSequence();
+};
+
+window._continueBootSequence = function() {
     if (!window.myAuthorId) {
         window.myAuthorId = 'lord_' + Math.random().toString(36).substr(2, 9) + Date.now();
         localStorage.setItem('chess_saga_author_id', window.myAuthorId);
@@ -380,6 +399,26 @@ window.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('tutorialCompleted', 'true');
             setTimeout(() => window.tutorialManager.start(), 1000);
         }
+    }
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+    window.applyTranslations();
+    window.updateScenariosLanguage();
+
+    const langModal = document.getElementById('lang-select-modal');
+    const savedLang = localStorage.getItem('chess_saga_lang');
+
+    if (!savedLang && langModal) {
+        // First launch: show language picker, hold boot until selection
+        langModal.style.display = 'flex';
+        // Sync settings dropdown if already rendered
+        const sel = document.getElementById('lang-selector');
+        if (sel) sel.value = 'ru';
+    } else {
+        // Language already chosen: hide modal and continue
+        if (langModal) langModal.style.display = 'none';
+        window._continueBootSequence();
     }
 });
 
@@ -427,6 +466,10 @@ window.saveNickname = async function () {
         localStorage.setItem('tutorialCompleted', 'true');
         setTimeout(() => window.tutorialManager.start(), 1500);
     }
+
+    // Also sync the lang dropdown in settings to current saved language
+    const sel = document.getElementById('lang-selector');
+    if (sel) sel.value = localStorage.getItem('chess_saga_lang') || 'ru';
 }
 
 window.openSettings = function () { updateNicknameDisplay(); document.getElementById('settings-modal').classList.remove('hidden'); }
@@ -514,19 +557,19 @@ window.showNotification = function (text, type = 'success') {
 
     if (type === 'success') {
         toast.classList.add('bg-amber-500', 'text-slate-900');
-        icon.innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="sparkles">✨</span>.png" class="w-6 h-6 object-contain" onerror="this.outerHTML='<span class=\\'text-xl\\'><span class="icon-placeholder" data-icon="sparkles">✨</span></span>'">`;
+        icon.innerHTML = window.iconImg('✨', 'w-6 h-6 object-contain');
     }
     else if (type === 'error') {
         toast.classList.add('bg-red-600', 'text-white');
-        icon.innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">‼</span>️.png" class="w-6 h-6 object-contain" onerror="this.outerHTML='<span class=\\'text-xl\\'><span class="icon-placeholder" data-icon="icon-unknown">‼</span>️</span>'">`;
+        icon.innerHTML = window.iconImg('‼️', 'w-6 h-6 object-contain');
     }
     else if (type === 'inq') {
         toast.classList.add('bg-purple-900', 'text-white');
-        icon.innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">👁</span>️.png" class="w-6 h-6 object-contain" onerror="this.outerHTML='<span class=\\'text-xl\\'><span class="icon-placeholder" data-icon="icon-unknown">👁</span>️</span>'">`;
+        icon.innerHTML = window.iconImg('👁️', 'w-6 h-6 object-contain');
     }
     else {
         toast.classList.add('bg-sky-600', 'text-white');
-        icon.innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="scroll">📜</span>.png" class="w-6 h-6 object-contain" onerror="this.outerHTML='<span class=\\'text-xl\\'><span class="icon-placeholder" data-icon="scroll">📜</span></span>'">`;
+        icon.innerHTML = window.iconImg('📜', 'w-6 h-6 object-contain');
     }
 
     setTimeout(() => {
