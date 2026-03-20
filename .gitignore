@@ -1,0 +1,22 @@
+# Системные файлы (мусор от Windows и Mac)
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Настройки редакторов кода
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Временные файлы и логи
+*.log
+tmp/
+temp/
+
+# Если у тебя есть папка со старыми версиями или бэкапами
+backups/
+old_versions/
+
+# Кэш браузера (если вдруг попал в папку)
+.cache/

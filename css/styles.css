@@ -1,0 +1,902 @@
+:root {
+    --bg-dark: #020617;
+    --gold: #f59e0b;
+    --gold-dim: #78350f;
+    --azure: #38bdf8;
+}
+body {
+    font-family: 'Philosopher', sans-serif;
+    background-color: var(--bg-dark);
+    color: #f8fafc;
+    overflow-x: hidden;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+h1, h2, h3 { font-family: 'Cinzel', serif; }
+
+/* =========================================
+   DARK FANTASY & GLASSMORPHISM CORE
+========================================= */
+.font-cinzel { font-family: 'Cinzel', serif; }
+.font-philosopher { font-family: 'Philosopher', sans-serif; }
+
+/* Magic glow effects */
+.glow-gold { text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 20px rgba(245, 158, 11, 0.4); }
+.glow-azure { text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(56, 189, 248, 0.4); }
+.glow-ruby { text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); }
+.border-glow-gold { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), inset 0 0 15px rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); }
+
+/* Glass Panels */
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Glass Inputs */
+.glass-input {
+    background: rgba(2, 6, 23, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    color: var(--gold);
+    transition: all 0.3s ease;
+}
+.glass-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    outline: none;
+}
+
+/* Premium Buttons */
+.glass-button-gold {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 1) 100%);
+    border: 1px solid rgba(253, 230, 138, 0.6);
+    color: #020617;
+    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.4);
+    transition: all 0.3s ease;
+}
+.glass-button-gold:hover {
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.7);
+    transform: translateY(-2px);
+}
+
+.glass-button-outline {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#main-menu {
+    background: none;
+    padding: 0; 
+}
+
+.scenario-selector {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+@media (max-width: 1024px) {
+    .scenario-selector { grid-template-columns: 1fr; }
+}
+
+.scenario-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    border-radius: 1.5rem;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+.scenario-card:hover {
+    border-color: rgba(245, 158, 11, 0.7);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.2);
+}
+.scenario-card.active { 
+    border-color: var(--gold); 
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: inset 0 0 30px rgba(245, 158, 11, 0.2), 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.app-container {
+    display: flex !important;
+    visibility: hidden;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+.app-visible {
+    visibility: visible;
+    opacity: 1 !important;
+    pointer-events: auto;
+}
+
+/* Keep left-panel class for any JS hooks but remove structural constraints */
+.left-panel { position: relative; }
+
+.theater-zone-mini { text-align: center; max-width: 400px; }
+.visual-stage-mini { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+    filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.3)); 
+    transition: all 0.5s; 
+}
+.visual-stage-mini img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+
+/* =========================================
+   FREE PLAY GAME LAYOUT
+   ========================================= */
+.game-layout-wrapper {
+    display: grid;
+    width: 100%;
+    margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+    .game-layout-wrapper {
+        grid-template-columns: 1.618fr 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+}
+
+@media (max-width: 1023px) {
+    .game-layout-wrapper {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+#game-oracle-panel {
+    min-height: 15rem;
+    max-height: 85vh;
+}
+
+.chess-board-outer { 
+    position: relative;
+    background: #1e293b; 
+    border-radius: 12px; 
+    width: 100%;
+    margin: 0 auto;
+}
+.chess-board-outer.loading::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-conic-gradient(#1e2d40 0% 25%, #1a2535 0% 50%) 0 0 / 12.5% 12.5%;
+    border-radius: 12px;
+    opacity: 0.5;
+    animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 100;
+}
+@keyframes skeleton-pulse {
+    from { opacity: 0.3; }
+    to   { opacity: 0.6; }
+}
+
+.chess-board { 
+    display: grid; 
+    grid-template-columns: repeat(8, 1fr); 
+    width: 100%; 
+    height: 100%; 
+}
+.square { 
+    width: 100% !important; 
+    height: 100% !important; 
+    aspect-ratio: 1 / 1;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    position: relative; 
+}
+
+.square.light { background-color: #d6b08d; }
+.square.dark { background-color: #8b5e3c; }
+.piece-img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; z-index: 10; }
+
+.square.active-target { animation: target-pulse 1.5s infinite; z-index: 20; cursor: pointer; }
+@keyframes target-pulse {
+    0%   { box-shadow: inset 0 0 0 var(--gold), 0 0 0 0 rgba(245,158,11,0); background-color: rgba(245, 158, 11, 0.2); }
+    50%  { box-shadow: inset 0 0 25px var(--gold), 0 0 20px 4px rgba(245,158,11,0.5); background-color: rgba(245, 158, 11, 0.5); }
+    100% { box-shadow: inset 0 0 0 var(--gold), 0 0 0 0 rgba(245,158,11,0); background-color: rgba(245, 158, 11, 0.2); }
+}
+.editor-target { background-color: rgba(56, 189, 248, 0.5) !important; box-shadow: inset 0 0 15px #38bdf8; }
+
+.valid-move-marker {
+    width: clamp(10px, 28%, 22px);
+    height: clamp(10px, 28%, 22px);
+    background: radial-gradient(circle, rgba(194,163,255,0.9) 20%, rgba(168,85,247,0.4) 60%, transparent 80%);
+    border-radius: 50%;
+    position: absolute;
+    z-index: 15;
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(194,163,255,0.6), 0 0 4px rgba(168,85,247,1);
+    animation: rune-pulse 1.8s ease-in-out infinite;
+    touch-action: none;
+}
+@keyframes rune-pulse {
+    0%, 100% { transform: scale(0.85); opacity: 0.7; }
+    50%       { transform: scale(1.1);  opacity: 1; }
+}
+.valid-capture-marker {
+    width: clamp(20px, 85%, 45px); height: clamp(20px, 85%, 45px);
+    border: 3px solid rgba(239,68,68,0.8);
+    border-radius: 50%;
+    position: absolute; z-index: 15;
+    pointer-events: none;
+    background: transparent;
+    box-shadow: inset 0 0 8px rgba(239,68,68,0.3), 0 0 10px rgba(239,68,68,0.4);
+    animation: capture-ring-pulse 1.2s ease-in-out infinite;
+    touch-action: none;
+}
+@keyframes capture-ring-pulse {
+    0%, 100% { border-color: rgba(239,68,68,0.6); }
+    50%       { border-color: rgba(239,68,68,1); box-shadow: inset 0 0 15px rgba(239,68,68,0.5), 0 0 20px rgba(239,68,68,0.6); }
+}
+
+.btn-exit-x { position: absolute; top: 2rem; left: 2rem; width: 48px; height: 48px; border: 2px solid rgba(245, 158, 11, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); cursor: pointer; z-index: 5001; font-size: 2rem; background: rgba(2, 6, 23, 0.8); }
+.btn-exit-x:hover { background: var(--gold); color: #000; }
+
+.right-panel { background: transparent; }
+.chronicle-card { background: rgba(15, 23, 42, 0.6); }
+.narrative-scroll { flex-grow: 1; overflow-y: auto; }
+
+.flash-screen { position: fixed; inset: 0; background: white; opacity: 0; pointer-events: none; z-index: 9999; }
+.flash-active { animation: fl 0.4s ease-out; }
+@keyframes fl { 0% { opacity: 0.8; } 100% { opacity: 0; } }
+
+.victory-flash { animation: victory-flash-anim 1.5s ease-out; }
+@keyframes victory-flash-anim {
+    0% { box-shadow: 0 0 100px rgba(245, 158, 11, 1), inset 0 0 50px rgba(245, 158, 11, 0.8); border-color: var(--gold); }
+    100% { box-shadow: 0 0 0px rgba(245, 158, 11, 0), inset 0 0 0px rgba(245, 158, 11, 0); }
+}
+
+.capture-flash { animation: captureFlash 0.3s ease-out; }
+@keyframes captureFlash {
+    0% { box-shadow: inset 0 0 50px rgba(220, 38, 38, 0.8), 0 0 30px rgba(220, 38, 38, 0.5); border-color: red; }
+    100% { box-shadow: inset 0 0 0px rgba(220, 38, 38, 0), 0 0 0px rgba(220, 38, 38, 0); border-color: var(--gold); }
+}
+
+.hidden { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; transition: opacity 0.3s ease, visibility 0.3s ease !important; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Кастомный скролл для горизонтальной ленты ходов */
+.custom-scrollbar::-webkit-scrollbar { height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #020617; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* =========================================
+   PUZZLE SYSTEM CSS
+========================================= */
+/* Generic shake — applies in both game & puzzle modes */
+.shake-anim {
+    animation: error-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+/* Puzzle-specific extra glow when shaking */
+.puzzle-board-outer.shake-anim {
+    border-color: rgba(239, 68, 68, 0.8) !important;
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.4) !important;
+}
+
+@keyframes error-shake {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+    40%, 60% { transform: translate3d(8px, 0, 0); }
+}
+
+.puzzle-tier-btn.active-tier {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: var(--gold);
+    box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.pulse-aura {
+    animation: puzzle-aura-pulse 2s infinite alternate;
+}
+
+@keyframes puzzle-aura-pulse {
+    0% { opacity: 0.1; filter: blur(20px); transform: scale(1); }
+    100% { opacity: 0.5; filter: blur(30px); transform: scale(1.05); }
+}
+
+/* =========================================
+   DARK ACADEMY - PUZZLE THEMES
+========================================= */
+.glow-purple {
+    text-shadow: 0 0 10px rgba(194, 163, 255, 0.8), 0 0 20px rgba(194, 163, 255, 0.4);
+}
+
+.theme-group button {
+    outline: none;
+}
+
+.theme-btn.active-theme {
+    color: #c2a3ff;
+    text-shadow: 0 0 10px rgba(194, 163, 255, 0.6);
+    position: relative;
+    padding-left: 0.5rem;
+}
+
+.theme-btn.active-theme::before {
+    content: "►";
+    position: absolute;
+    left: -0.5rem;
+    color: #c2a3ff;
+    font-size: 0.8em;
+}
+
+/* =========================================
+   DARK ACADEMY — CATEGORY GRID CARDS
+========================================= */
+
+/* Base category card */
+.cat-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem 0.75rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.7) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    /* Subtle parchment texture using CSS noise */
+}
+.cat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        135deg,
+        transparent,
+        transparent 2px,
+        rgba(194, 163, 255, 0.02) 2px,
+        rgba(194, 163, 255, 0.02) 4px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+}
+.cat-card:hover {
+    border-color: rgba(194, 163, 255, 0.7);
+    transform: translateY(-6px) scale(1.03);
+    box-shadow:
+        0 0 0 1px rgba(194, 163, 255, 0.3),
+        0 0 20px rgba(194, 163, 255, 0.3),
+        0 12px 40px rgba(0, 0, 0, 0.6);
+    background:
+        linear-gradient(135deg, rgba(30, 15, 60, 0.9) 0%, rgba(20, 30, 60, 0.85) 100%);
+}
+.cat-card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.cat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px rgba(194, 163, 255, 0.5));
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+.cat-card:hover .cat-icon {
+    filter: drop-shadow(0 0 12px rgba(194, 163, 255, 0.9));
+    transform: scale(1.15);
+}
+.cat-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #cbd5e1;
+    transition: color 0.3s ease;
+    line-height: 1.3;
+}
+.cat-card:hover .cat-name {
+    color: #e8c87a;
+}
+.cat-count {
+    font-family: 'Philosopher', sans-serif;
+    font-size: 0.65rem;
+    margin-top: 0.35rem;
+    color: #4b5563;
+    transition: color 0.3s ease;
+}
+.cat-card:hover .cat-count {
+    color: #c2a3ff;
+}
+
+/* Gold-accent card (Advantage) */
+.cat-card.cat-gold {
+    border-color: rgba(245, 158, 11, 0.3);
+}
+.cat-card.cat-gold:hover {
+    border-color: rgba(245, 158, 11, 0.8);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), 0 12px 40px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, rgba(60, 40, 10, 0.9) 0%, rgba(30, 25, 10, 0.85) 100%);
+}
+.cat-card.cat-gold .cat-icon {
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+}
+.cat-card.cat-gold:hover .cat-icon {
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 1));
+}
+.cat-card.cat-gold:hover .cat-name { color: #fbbf24; }
+
+/* Ruby-accent card (Crush) */
+.cat-card.cat-ruby {
+    border-color: rgba(239, 68, 68, 0.25);
+}
+.cat-card.cat-ruby:hover {
+    border-color: rgba(239, 68, 68, 0.8);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.25), 0 12px 40px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, rgba(60, 10, 10, 0.9) 0%, rgba(30, 8, 8, 0.85) 100%);
+}
+.cat-card.cat-ruby:hover .cat-name { color: #f87171; }
+
+/* Sacrifice card — fire effect */
+.cat-card.sacrifice-card {
+    border-color: rgba(251, 146, 60, 0.35);
+    background:
+        linear-gradient(135deg, rgba(60, 20, 5, 0.85) 0%, rgba(30, 15, 5, 0.75) 100%);
+}
+.cat-card.sacrifice-card:hover {
+    border-color: rgba(251, 146, 60, 0.9);
+    box-shadow:
+        0 0 0 1px rgba(251, 146, 60, 0.4),
+        0 0 30px rgba(251, 146, 60, 0.4),
+        0 12px 40px rgba(0,0,0,0.7);
+}
+.sacrifice-icon {
+    animation: sacrifice-flicker 2.5s infinite alternate;
+}
+@keyframes sacrifice-flicker {
+    0%   { filter: drop-shadow(0 0 4px rgba(251,146,60,0.6)); transform: scale(1); }
+    33%  { filter: drop-shadow(0 0 10px rgba(239,68,68,0.8)); transform: scale(1.1); }
+    66%  { filter: drop-shadow(0 0 6px rgba(251,146,60,0.5)); transform: scale(0.97); }
+    100% { filter: drop-shadow(0 0 14px rgba(239,68,68,1)); transform: scale(1.08); }
+}
+.cat-card.sacrifice-card:hover .cat-name { color: #fb923c; }
+
+/* =========================================
+   SACRIFICE PIECE AURA (on board images)
+========================================= */
+.sacrifice-piece-aura {
+    animation: piece-aura-pulse 1.8s infinite alternate;
+}
+@keyframes piece-aura-pulse {
+    0%   { filter: drop-shadow(0 0 3px rgba(239,68,68,0.5)); }
+    50%  { filter: drop-shadow(0 0 10px rgba(251,146,60,0.9)) drop-shadow(0 0 3px rgba(239,68,68,0.5)); }
+    100% { filter: drop-shadow(0 0 6px rgba(239,68,68,0.8)); }
+}
+
+/* =========================================
+   GRIMOIRE PANEL (left sidebar parchment)
+========================================= */
+.grimoire-panel {
+    background:
+        linear-gradient(160deg, rgba(20, 10, 35, 0.95) 0%, rgba(10, 15, 30, 0.92) 100%) !important;
+    position: relative;
+}
+.grimoire-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(194,163,255,0.015) 0px,
+        rgba(194,163,255,0.015) 1px,
+        transparent 1px,
+        transparent 28px
+    );
+    border-radius: inherit;
+    z-index: 0;
+}
+
+/* =========================================
+   ORACLE MOBILE COLLAPSE/EXPAND
+========================================= */
+.oracle-collapsed {
+    max-height: 52px;
+    overflow: hidden;
+}
+.oracle-expanded {
+    max-height: 50vh;
+    overflow: visible;
+}
+@media (min-width: 768px) {
+    /* On desktop oracle is never collapsed */
+    .oracle-collapsed,
+    .oracle-expanded {
+        max-height: none;
+        overflow: visible;
+    }
+    #oracle-toggle-btn { display: none; }
+}
+
+/* =========================================
+   app-visible OVERRIDE FOR PUZZLE APP
+   puzzle-app uses flex-col + internal grid
+========================================= */
+#puzzle-app.app-visible {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh;
+    overflow-y: auto;
+}
+#puzzle-play-view {
+    min-height: 100dvh;
+}
+
+/* =========================================
+   EYE OF THE ABYSS — Evaluation Gauge
+========================================= */
+.eye-of-abyss-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 28px;
+    flex-shrink: 0;
+    gap: 4px;
+}
+.eye-of-abyss-label {
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #c2a3ff;
+    text-shadow: 0 0 6px rgba(194, 163, 255, 0.7);
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    line-height: 1;
+}
+.eye-of-abyss-frame {
+    flex: 1;
+    width: 20px;
+    min-height: 120px;
+    background: linear-gradient(180deg, #0a0510 0%, #140820 50%, #0a0510 100%);
+    border: 1px solid rgba(194, 163, 255, 0.35);
+    border-radius: 10px;
+    box-shadow:
+        0 0 8px rgba(194, 163, 255, 0.15),
+        inset 0 0 8px rgba(0, 0, 0, 0.9);
+    position: relative;
+    overflow: hidden;
+}
+/* Gothic line hatching on the frame background */
+.eye-of-abyss-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 6px,
+        rgba(194, 163, 255, 0.03) 6px,
+        rgba(194, 163, 255, 0.03) 7px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 0;
+}
+/* Center divider line (50% mark) */
+.eye-of-abyss-frame::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(194, 163, 255, 0.4);
+    z-index: 2;
+}
+.eye-of-abyss-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(0deg,
+        #4c1d95 0%,
+        #7c3aed 30%,
+        #a855f7 70%,
+        #d8b4fe 100%
+    );
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.7), 0 0 4px rgba(216, 180, 254, 0.5);
+    transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 0 8px 8px;
+    z-index: 1;
+}
+@keyframes eye-dramatic-pulse {
+    0%   { box-shadow: 0 0 10px rgba(168,85,247,0.5); }
+    40%  { box-shadow: 0 0 40px rgba(168,85,247,1), 0 0 80px rgba(168,85,247,0.4); }
+    100% { box-shadow: 0 0 12px rgba(168,85,247,0.7); }
+}
+.eye-of-abyss-fill.eye-dramatic {
+    animation: eye-dramatic-pulse 0.7s ease-out forwards;
+}
+.eye-score-text {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    font-weight: 700;
+    color: #c2a3ff;
+    text-align: center;
+    min-height: 14px;
+    line-height: 1;
+}
+
+/* =========================================
+   PUZZLE MOBILE BOTTOM NAV
+========================================= */
+.puzzle-bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    background: rgba(2, 6, 23, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(194, 163, 255, 0.2);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: stretch;
+    z-index: 4500;
+}
+.puzzle-bottom-nav .pnav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: background 0.2s;
+}
+.puzzle-bottom-nav .pnav-btn:hover,
+.puzzle-bottom-nav .pnav-btn:active { background: rgba(194, 163, 255, 0.08); }
+.puzzle-bottom-nav .pnav-btn + .pnav-btn { border-left: 1px solid rgba(194, 163, 255, 0.1); }
+.puzzle-bottom-nav .pnav-icon { font-size: 22px; line-height: 1; }
+.puzzle-bottom-nav .pnav-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+}
+
+/* =========================================
+   PGN IMPORT MODAL — parchment lines
+========================================= */
+#pgn-import-modal textarea {
+    background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 19px,
+        rgba(194, 163, 255, 0.04) 19px,
+        rgba(194, 163, 255, 0.04) 20px
+    );
+}
+
+/* =========================================
+   QUICK WINS - UX POLISH
+========================================= */
+/* 1. Vignette of Doom (Error Flash) */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 rgba(150, 0, 0, 0);
+    transition: box-shadow 0.8s ease-out;
+    z-index: 9999;
+}
+body.vignette-active::after {
+    box-shadow: inset 0 0 150px rgba(180, 10, 10, 0.85);
+    transition: box-shadow 0.1s ease-in;
+}
+
+/* 2. Tactile Feedback for Bottom Nav */
+.puzzle-bottom-nav .pnav-btn {
+    transition: background 0.2s, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.puzzle-bottom-nav .pnav-btn:active {
+    transform: scale(0.92);
+    background: rgba(194, 163, 255, 0.15);
+}
+
+/* 3. Eye of Abyss - Forced Mate States */
+.eye-of-abyss-wrap.eye-mate-lose .eye-of-abyss-fill {
+    background: linear-gradient(0deg, #7f1d1d 0%, #dc2626 50%, #f87171 100%);
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.9), 0 0 5px rgba(248, 113, 113, 0.8);
+    animation: eye-mate-shake 0.3s infinite;
+}
+.eye-of-abyss-wrap.eye-mate-win .eye-of-abyss-fill {
+    background: linear-gradient(0deg, #b45309 0%, #f59e0b 50%, #fde68a 100%);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.9), 0 0 10px rgba(253, 230, 138, 0.8);
+}
+@keyframes eye-mate-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-1px); }
+    75% { transform: translateX(1px); }
+}
+
+/* 4. Oracle Avatar CSS (Eye of the Abyss) */
+#oracle-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin: 0 auto;
+    transition: all 0.5s ease;
+}
+
+.oracle-idle {
+    background: radial-gradient(circle, #4c1d95 20%, #000 80%);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+    animation: oracle-breathe 4s infinite alternate ease-in-out;
+}
+@keyframes oracle-breathe {
+    from { transform: scale(1); box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+    to { transform: scale(1.1); box-shadow: 0 0 20px rgba(168, 85, 247, 0.7); }
+}
+
+.oracle-thinking {
+    background: radial-gradient(circle, #7c3aed 10%, #4c1d95 60%, #000 90%);
+    box-shadow: 0 0 30px #a855f7, inset 0 0 10px #000;
+    animation: oracle-erratic 0.4s infinite alternate linear;
+}
+@keyframes oracle-erratic {
+    0% { transform: scale(1.1) translate(0, 0); filter: drop-shadow(0 0 15px #c084fc); }
+    100% { transform: scale(0.9) translate(1px, -1px); filter: drop-shadow(0 0 30px #d8b4fe); }
+}
+
+.oracle-speaking {
+    background: radial-gradient(circle, #fde68a 10%, #d97706 60%, #000 90%);
+    box-shadow: 0 0 40px #f59e0b, 0 0 20px #fbbf24;
+    animation: oracle-flash 2s ease-out;
+}
+@keyframes oracle-flash {
+    0% { transform: scale(1.5); filter: brightness(2); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* 5. Cursed Capture VFX Particles */
+.vfx-particle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b, 0 0 4px #ef4444;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9000;
+    /* Transformation and opacity applied via inline JS styles */
+}
+
+/* 6. Z-Index and Overlap Fixes for Modals */
+#editor-modal, #pgn-import-modal, #promotion-modal, #community-modal, #forge-modal {
+    z-index: 9990 !important;
+}
+/* ===============
+   THE GOLDEN RATIO
+   ===============
+   Implements a 38% / 62% layout for maximum harmony.
+*/
+.golden-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 62% 38%;
+    height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    background: #0a0510;
+}
+
+@media (min-width: 1024px) {
+    .golden-grid-container {
+        grid-template-columns: 38% 62%;
+        grid-template-rows: 1fr;
+    }
+}
+
+.golden-panel-minor {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(20, 10, 30, 0.95), rgba(10, 5, 20, 0.98));
+    overflow-y: auto;
+    z-index: 20;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+@media (min-width: 1024px) {
+    .golden-panel-minor {
+        border-right: 1px solid rgba(128, 111, 170, 0.2);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    }
+}
+
+.golden-panel-major {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    order: -1;
+}
+
+@media (min-width: 1024px) {
+    .golden-panel-major {
+        order: 0;
+    }
+}
+
+.golden-control-group {
+    background: rgba(15, 10, 25, 0.6);
+    border: 1px solid rgba(128, 111, 170, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* New Custom Animations */
+@keyframes pageTurnRight {
+    0% { opacity: 0; transform: translateX(30px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+.animate-page-turn {
+    animation: pageTurnRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.loader-spin-smooth {
+    animation: loaderSpinSmooth 1.5s linear infinite;
+}
+@keyframes loaderSpinSmooth {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
