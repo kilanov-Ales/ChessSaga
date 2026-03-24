@@ -1538,7 +1538,8 @@
                 hideBanner();
             });
 
-            // Register Service Worker
+            // Register Service Worker (temporarily disabled for debugging)
+            /*
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('sw.js').then(reg => {
@@ -1546,6 +1547,7 @@
                     }).catch(err => console.log('SW registration failed', err));
                 });
             }
+            */
         })();
     </script>
 </body>

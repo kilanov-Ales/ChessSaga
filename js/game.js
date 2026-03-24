@@ -51,21 +51,40 @@ window.startGame = function() {
     if (goalsHeader) goalsHeader.textContent = window.t('tasks_title');
     if (egoalsHeader) egoalsHeader.textContent = window.t('enemy_title');
 
-    document.getElementById('goals-list').innerHTML = (sc.goals || []).map((g, i) => `<li id="g${i}">• ${g}</li>`).join('');
-    document.getElementById('enemy-goals').innerHTML = (sc.egoals || []).map((g, i) => `<li id="eg${i}">• ${g}</li>`).join('');
+    const goalsList = document.getElementById('goals-list');
+    if (goalsList) goalsList.innerHTML = (sc.goals || []).map((g, i) => `<li id="g${i}">• ${g}</li>`).join('');
+    else console.warn('Goals list not found, skipping');
+
+    const enemyGoals = document.getElementById('enemy-goals');
+    if (enemyGoals) enemyGoals.innerHTML = (sc.egoals || []).map((g, i) => `<li id="eg${i}">• ${g}</li>`).join('');
+    else console.warn('Enemy goals list not found, skipping');
     
-    document.getElementById('chronicle-list').innerHTML = '';
-    document.getElementById('move-counter').textContent = `${window.t('move_counter')}1`;
-    document.getElementById('player-turn').textContent = window.t('turn_white');
+    const chronicleList = document.getElementById('chronicle-list');
+    if (chronicleList) chronicleList.innerHTML = '';
+    else console.warn('Chronicle list not found, skipping');
 
-    document.getElementById('visual-stage').innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="castle">🏰</span>.png" style="width: 80px; height: 80px;" onerror="this.outerHTML='<span style=\\'font-size: 4rem;\\'><span class="icon-placeholder" data-icon="castle">🏰</span></span>'">`;
-    document.getElementById('scene-title').textContent = sc.title || window.t('calm_title');
-    document.getElementById('scene-desc').textContent = window.t('calm_desc');
+    const moveCounter = document.getElementById('move-counter');
+    if (moveCounter) moveCounter.textContent = `${window.t('move_counter')}1`;
 
-    document.getElementById('main-menu').style.opacity = '0';
+    const playerTurn = document.getElementById('player-turn');
+    if (playerTurn) playerTurn.textContent = window.t('turn_white');
+
+    const visualStage = document.getElementById('visual-stage');
+    if (visualStage) visualStage.innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="castle">🏰</span>.png" style="width: 80px; height: 80px;" onerror="this.outerHTML='<span style=\\'font-size: 4rem;\\'><span class="icon-placeholder" data-icon="castle">🏰</span></span>'">`;
+
+    const sceneTitle = document.getElementById('scene-title');
+    if (sceneTitle) sceneTitle.textContent = sc.title || window.t('calm_title');
+
+    const sceneDesc = document.getElementById('scene-desc');
+    if (sceneDesc) sceneDesc.textContent = window.t('calm_desc');
+
+    const mainMenu = document.getElementById('main-menu');
+    if (mainMenu) mainMenu.style.opacity = '0';
+
     setTimeout(() => {
-        document.getElementById('main-menu').style.display = 'none';
-        document.getElementById('main-app').classList.add('app-visible');
+        if (mainMenu) mainMenu.style.display = 'none';
+        const mainApp = document.getElementById('main-app');
+        if (mainApp) mainApp.classList.add('app-visible');
         window.initBoard(); window.renderBoard();
 
         // ── MUSIC: switch to battle mode when the game begins ──────────────

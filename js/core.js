@@ -263,7 +263,12 @@ window._continueBootSequence = function() {
     }
 
     if (!window.myNickname) {
-        document.getElementById('nickname-modal').classList.remove('hidden');
+        const nicknameModal = document.getElementById('nickname-modal');
+        if (nicknameModal) {
+            nicknameModal.classList.remove('hidden');
+        } else {
+            console.warn('Nickname modal not found, skipping');
+        }
     } else {
         updateNicknameDisplay();
         let guideShown = localStorage.getItem('chess_saga_guide_shown');
