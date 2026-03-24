@@ -178,17 +178,28 @@ async function initPuzzles() {
     }
     loadingBanner.style.display = 'block';
 
+    // Minimal fallback puzzle used when puzzles.json is unavailable (404 or network error)
+    const FALLBACK_PUZZLES = [
+        {
+            puzzleid: 'fallback_01',
+            fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+            moves: 'f3g5 d8e7 g5f7',
+            rating: 1200,
+            themes: 'fork middlegame',
+            gameurl: ''
+        }
+    ];
+
     try {
         const resp = await fetch('puzzles.json');
-        if (resp.ok) {
-            allPuzzles = await resp.json();
-            console.log('[Puzzles] Loaded', allPuzzles.length, 'puzzles into global archive');
-        } else {
+        if (!resp.ok) {
             throw new Error('HTTP ' + resp.status);
         }
+        allPuzzles = await resp.json();
+        console.log('[Puzzles] Loaded', allPuzzles.length, 'puzzles into global archive');
     } catch (e) {
-        console.warn('[Puzzles] Could not load puzzles.json:', e);
-        allPuzzles = [];
+        console.warn('[Puzzles] Could not load puzzles.json:', e, '— using fallback puzzle set.');
+        allPuzzles = FALLBACK_PUZZLES;
     }
 
     loadingBanner.style.display = 'none';

@@ -70,7 +70,7 @@ window.startGame = function() {
     if (playerTurn) playerTurn.textContent = window.t('turn_white');
 
     const visualStage = document.getElementById('visual-stage');
-    if (visualStage) visualStage.innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="castle">🏰</span>.png" style="width: 80px; height: 80px;" onerror="this.outerHTML='<span style=\\'font-size: 4rem;\\'><span class="icon-placeholder" data-icon="castle">🏰</span></span>'">`;
+    if (visualStage) visualStage.innerHTML = `<span style="font-size: 4rem;">🏰</span>`;
 
     const sceneTitle = document.getElementById('scene-title');
     if (sceneTitle) sceneTitle.textContent = sc.title || window.t('calm_title');
@@ -265,7 +265,7 @@ window.jumpToStep = function(stepIndex) {
         document.getElementById('move-counter').textContent = `${window.t('move_counter')}${displayMove}`;
         document.getElementById('player-turn').textContent = window.currentStep % 2 === 0 ? window.t('turn_white') : window.t('turn_black');
     } else {
-        document.getElementById('visual-stage').innerHTML = `<img src="Visualization/<span class="icon-placeholder" data-icon="castle">🏰</span>.png" style="width: 80px; height: 80px;" onerror="this.outerHTML='<span style=\\'font-size: 4rem;\\'><span class="icon-placeholder" data-icon="castle">🏰</span></span>'">`;
+        document.getElementById('visual-stage').innerHTML = `<span style="font-size: 4rem;">🏰</span>`;
         document.getElementById('scene-title').textContent = sc.title || window.t('calm_title');
         document.getElementById('scene-desc').textContent = window.t('calm_desc');
         document.getElementById('move-counter').textContent = `${window.t('move_counter')}1`;
@@ -300,7 +300,12 @@ window.updateVisuals = function(data, createLog) {
     }
     
     const stage = document.getElementById('visual-stage');
-    stage.innerHTML = `<img src="Visualization/${data.icon}.png" onerror="this.outerHTML='<span style=\\'font-size: 4rem;\\'>${data.icon}</span>'">`;
+    // Smart icon render: use <img> only for real file paths, <span> for emoji/text
+    if (data.icon && data.icon.match(/^[\/a-zA-Z0-9_\-\.]+\.\w{2,5}$/)) {
+        stage.innerHTML = `<img src="Visualization/${data.icon}.png" style="width:80px;height:80px;" onerror="this.outerHTML='<span style=\\'font-size:4rem;\\'>${data.icon}</span>'">`;
+    } else {
+        stage.innerHTML = `<span style="font-size: 4rem;">${data.icon || '⚔️'}</span>`;
+    }
 
     document.getElementById('scene-title').textContent = data.title;
     document.getElementById('scene-desc').textContent = data.text;
@@ -319,7 +324,7 @@ window.updateVisuals = function(data, createLog) {
         const g = document.getElementById(`g${data.goal}`);
         if(g) { 
             g.className = "text-green-500 font-bold transition-all"; 
-            g.innerHTML = `<img src="Visualization/g<span class="icon-placeholder" data-icon="icon-unknown">✔</span>️.png" class="inline-block w-5 h-5 mr-1" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">✔</span>️</span>'"> ` + g.innerText.replace('• ', '').replace('<span class="icon-placeholder" data-icon="icon-unknown">✔</span> ', '');
+            g.innerHTML = `<span style="margin-right:4px">✔️</span>` + g.innerText.replace('• ', '');
             g.style.textDecoration = "line-through";
         }
     }
@@ -327,7 +332,7 @@ window.updateVisuals = function(data, createLog) {
         const eg = document.getElementById(`eg${data.egoal}`);
         if(eg) { 
             eg.className = "text-red-500 font-bold transition-all"; 
-            eg.innerHTML = `<img src="Visualization/r<span class="icon-placeholder" data-icon="icon-unknown">✔</span>️.png" class="inline-block w-5 h-5 mr-1" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">✔</span>️</span>'"> ` + eg.innerText.replace('• ', '').replace('<span class="icon-placeholder" data-icon="icon-unknown">✔</span> ', '');
+            eg.innerHTML = `<span style="margin-right:4px">✔️</span>` + eg.innerText.replace('• ', '');
             eg.style.textDecoration = "line-through";
         }
     }

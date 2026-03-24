@@ -1,28 +1,18 @@
-importScripts('stockfish.js');
-
-let engineInstance = null;
-let messageQueue = [];
-
-// Initialize the Stockfish WASM engine
-Stockfish().then((engine) => {
-    engineInstance = engine;
-    
-    // Set up message forwarding from engine -> main thread
-    engineInstance.addMessageListener((line) => {
-        postMessage(line);
-    });
-
-    // Process any queued messages that were sent before initialization
-    while (messageQueue.length > 0) {
-        engineInstance.postMessage(messageQueue.shift());
+// ═══════════════════════════════════════════════════════════
+// Stockfish Web Worker
+// stockfish.js (Emscripten build) is self-contained:
+//   - It reads UCI commands from self.onmessage (via postMessage)
+//   - It posts UCI output lines back via postMessage
+// So we just load it and it handles everything internally.
+// ═══════════════════════════════════════════════════════════
+try {
+    importScripts('stockfish.js');
+} catch (e) {
+    console.error('[worker] Failed to load stockfish.js:', e);
+    // Fallback: try CDN version
+    try {
+        importScripts('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js');
+    } catch (e2) {
+        console.error('[worker] CDN fallback also failed:', e2);
     }
-});
-
-// Set up message forwarding from main thread -> engine
-self.onmessage = function(event) {
-    if (engineInstance) {
-        engineInstance.postMessage(event.data);
-    } else {
-        messageQueue.push(event.data);
-    }
-};
+}
