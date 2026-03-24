@@ -63,8 +63,29 @@ window.iconImg = function (emoji, cls = 'w-6 h-6 object-contain', extra = '') {
     if (src) {
         return `<img src="${src}" class="${cls}" ${extra} onerror="this.outerHTML='<span class=\\'icon-placeholder\\' data-icon=\\'${emoji}\\'>${emoji}</span>'">`;
     }
-    // Simple text fallback for emojis
     return `<span class="icon-placeholder ${cls}" data-icon="${emoji}" ${extra}>${emoji}</span>`;
+};
+
+/**
+ * window.renderIcon(iconData, cls?) — universal safe icon renderer.
+ * Detects whether the value is a real image path or emoji/text:
+ *   - Real file (e.g. "castle.png", "Visualization/foo.svg") → <img> with onerror hide
+ *   - Emoji / text / serialized HTML spans                   → plain <span>
+ * This prevents emojis from ever being used as <img src="..."> which causes 404 spam.
+ */
+window.renderIcon = function(iconData, cls) {
+    if (!iconData) return '';
+    // Strip any HTML tags to extract raw text (handles serialized span wrappers)
+    const raw = String(iconData).replace(/<[^>]*>/g, '').trim();
+    // Real image path: only ASCII filename chars + known image extensions
+    const isRealFile = /^[a-zA-Z0-9_\-\/\.]+\.(png|jpg|jpeg|svg|webp|gif)$/i.test(raw);
+    if (isRealFile) {
+        const src = raw.startsWith('Visualization/') ? raw : 'Visualization/' + raw;
+        return '<img src="' + src + '" class="' + (cls || 'w-6 h-6 object-contain') + '" onerror="this.style.display=\'none\'">';
+    }
+    // Emoji or text — safe span, never an <img>
+    const display = raw || '⚔️';
+    return '<span class="icon-text ' + (cls || '') + '" style="line-height:1">' + display + '</span>';
 };
 
 window.API_URL = 'https://chess-api.kilanov.workers.dev/';

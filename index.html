@@ -241,10 +241,7 @@
             </button>
             <button onclick="openSettings()" class="hover:rotate-90 transition-transform duration-500 drop-shadow-lg"
                 data-i18n-title="settings_title">
-                <img src="Visualization/<span class=" icon-placeholder" data-icon="icon-unknown">⚙</span>️.png"
-                class="w-10 h-10 md:w-12 md:h-12 object-contain filter drop-shadow-[0_0_8px_rgba(148,163,184,0.5)]"
-                onerror="this.outerHTML='<span class=&quot;text-3xl md:text-4xl
-                    drop-shadow-[0_0_8px_rgba(148,163,184,0.5)]&quot;>⚙️</span>'">
+                <span class="text-3xl md:text-4xl drop-shadow-[0_0_8px_rgba(148,163,184,0.5)]">⚙️</span>
             </button>
         </div>
 
@@ -349,8 +346,7 @@
             <div class="space-y-5 text-slate-300 text-sm leading-relaxed">
                 <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
                     <h3 class="text-amber-500 font-bold mb-2 text-base flex items-center gap-2">
-                        <img src="Visualization/<span class=" icon-placeholder" data-icon="icon-unknown">⚔</span>️.png"
-                        class="w-6 h-6 object-contain" onerror="this.style.display='none'"> <span
+                        <span class="text-xl">⚔️</span> <span
                             data-i18n="guide_battle">Начало Битвы</span>
                     </h3>
                     <p data-i18n="guide_battle_desc">Выберите историю в главном меню и нажмите 'Начать битву'.</p>
@@ -427,8 +423,7 @@
 
             <div class="mb-4 flex flex-col items-center">
                 <span class="text-sky-400 font-bold mb-3 text-xs uppercase tracking-widest flex items-center gap-2">
-                    <img src="Visualization/<span class=" icon-placeholder" data-icon="icon-unknown">🗣</span>️.png"
-                class="w-5 h-5 object-contain" onerror="this.outerHTML='<span class=&quot;text-lg&quot;>🗣️</span>'">
+                    <span class="text-lg">🗣️</span>
                 <span data-i18n="voice_vol">Голос Летописца</span>
                 </span>
                 <input type="range" class="w-full h-3 rounded-lg accent-sky-400 cursor-pointer" min="0" max="1"
@@ -1121,26 +1116,21 @@
 
     </div><!-- /#puzzle-app -->
 
-    <!-- Puzzle Mode Mobile Bottom Nav (md:hidden via JS visibility) -->
     <nav class="puzzle-bottom-nav md:hidden" id="puzzle-mobile-nav" style="display:none">
         <button class="pnav-btn" onclick="showCategoryGrid()">
-            <img src="Visualization/img/ui/icon_book.png" class="w-6 h-6 object-contain mb-1"
-                onerror="this.outerHTML='<span class=&quot;pnav-icon&quot;>📖</span>'">
+            <span class="pnav-icon text-2xl">📖</span>
             <span class="pnav-label" data-i18n="nav_category">Книга</span>
         </button>
         <button class="pnav-btn" onclick="toggleOracle()">
-            <img src="Visualization/img/ui/icon_oracle.png" class="w-6 h-6 object-contain mb-1"
-                onerror="this.outerHTML='<span class=&quot;pnav-icon&quot;>👁️</span>'">
+            <span class="pnav-icon text-2xl">👁️</span>
             <span class="pnav-label" data-i18n="nav_oracle">Оракул</span>
         </button>
         <button class="pnav-btn" onclick="openEditor()">
-            <img src="Visualization/img/ui/icon_forge.png" class="w-6 h-6 object-contain mb-1"
-                onerror="this.outerHTML='<span class=&quot;pnav-icon&quot;>🔨</span>'">
+            <span class="pnav-icon text-2xl">🔨</span>
             <span class="pnav-label" data-i18n="nav_forge">Кузница</span>
         </button>
         <button class="pnav-btn" onclick="exitToMenu()">
-            <img src="Visualization/img/ui/icon_menu.png" class="w-6 h-6 object-contain mb-1"
-                onerror="this.outerHTML='<span class=&quot;pnav-icon&quot;>🛡️</span>'">
+            <span class="pnav-icon text-2xl">🛡️</span>
             <span class="pnav-label" data-i18n="nav_menu">Меню</span>
         </button>
     </nav>
@@ -1296,9 +1286,7 @@
                     <div class="mt-auto pt-3 w-full">
                         <button onclick="undoEditorStep()"
                             class="w-full bg-red-900/80 hover:bg-red-700 p-2.5 rounded-lg font-bold uppercase transition-colors text-white text-[10px] tracking-widest flex justify-center items-center gap-2 shadow-lg border border-red-500/30">
-                            <img src="Visualization/<span class=" icon-placeholder"
-                                data-icon="icon-unknown">🗑</span>️.png" class="w-4 h-4"
-                            onerror="this.style.display='none'"> <span data-i18n="forge_undo">Предать забвению</span>
+                            <span class="text-base">🗑️</span> <span data-i18n="forge_undo">Предать забвению</span>
                         </button>
                     </div>
                 </div>

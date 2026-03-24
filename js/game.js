@@ -300,12 +300,8 @@ window.updateVisuals = function(data, createLog) {
     }
     
     const stage = document.getElementById('visual-stage');
-    // Smart icon render: use <img> only for real file paths, <span> for emoji/text
-    if (data.icon && data.icon.match(/^[\/a-zA-Z0-9_\-\.]+\.\w{2,5}$/)) {
-        stage.innerHTML = `<img src="Visualization/${data.icon}.png" style="width:80px;height:80px;" onerror="this.outerHTML='<span style=\\'font-size:4rem;\\'>${data.icon}</span>'">`;
-    } else {
-        stage.innerHTML = `<span style="font-size: 4rem;">${data.icon || '⚔️'}</span>`;
-    }
+    // Global render icon ensures emojis don't end up in img srcs
+    stage.innerHTML = window.renderIcon ? window.renderIcon(data.icon, 'w-20 h-20 object-contain text-6xl') : `<span style="font-size: 4rem;">${data.icon || '⚔️'}</span>`;
 
     document.getElementById('scene-title').textContent = data.title;
     document.getElementById('scene-desc').textContent = data.text;

@@ -32,22 +32,23 @@ window.initIcons = function() {
     const end = start + ICONS_PER_PAGE;
     const pageIcons = availableIcons.slice(start, end);
 
-    container.innerHTML = pageIcons.map(icon => 
-        `<button onclick="setEditIcon('${icon}')" class="p-2 bg-slate-800 rounded-xl hover:bg-slate-700 text-base transition-transform hover:scale-110 cursor-pointer shadow-md flex items-center justify-center">
-            <img src="Visualization/${icon}.png" class="w-8 h-8 object-contain" alt="${icon}" onerror="this.outerHTML='<span>${icon}</span>'">
-        </button>`
-    ).join('');
+    // Use span for all icons — they are HTML with emoji text, never real image paths
+    container.innerHTML = pageIcons.map(icon => {
+        const raw = icon.replace(/<[^>]*>/g, '').trim() || '?';
+        const safe = icon.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        return `<button onclick="setEditIcon('${safe}')" class="p-2 bg-slate-800 rounded-xl hover:bg-slate-700 text-xl transition-transform hover:scale-110 cursor-pointer shadow-md flex items-center justify-center" title="${raw}">${raw}</button>`;
+    }).join('');
 
     let paginationHtml = '';
     if (window.currentIconPage > 0) {
-        paginationHtml += `<button onclick="changeIconPage(-1)" class="flex-1 p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors shadow flex justify-center items-center"><img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">⬆</span>️.png" class="w-5 h-5 object-contain" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">⬆</span>️</span>'"></button>`;
+        paginationHtml += `<button onclick="changeIconPage(-1)" class="flex-1 p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors shadow flex justify-center items-center text-lg">⬆️</button>`;
     } else {
-        paginationHtml += `<button disabled class="flex-1 p-2 bg-slate-800 rounded-lg shadow opacity-50 cursor-not-allowed flex justify-center items-center"><img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">⬆</span>️.png" class="w-5 h-5 object-contain" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">⬆</span>️</span>'"></button>`;
+        paginationHtml += `<button disabled class="flex-1 p-2 bg-slate-800 rounded-lg shadow opacity-50 cursor-not-allowed flex justify-center items-center text-lg">⬆️</button>`;
     }
     if (end < availableIcons.length) {
-        paginationHtml += `<button onclick="changeIconPage(1)" class="flex-1 p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors shadow flex justify-center items-center"><img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">⬇</span>️.png" class="w-5 h-5 object-contain" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">⬇</span>️</span>'"></button>`;
+        paginationHtml += `<button onclick="changeIconPage(1)" class="flex-1 p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors shadow flex justify-center items-center text-lg">⬇️</button>`;
     } else {
-        paginationHtml += `<button disabled class="flex-1 p-2 bg-slate-800 rounded-lg shadow opacity-50 cursor-not-allowed flex justify-center items-center"><img src="Visualization/<span class="icon-placeholder" data-icon="icon-unknown">⬇</span>️.png" class="w-5 h-5 object-contain" onerror="this.outerHTML='<span><span class="icon-placeholder" data-icon="icon-unknown">⬇</span>️</span>'"></button>`;
+        paginationHtml += `<button disabled class="flex-1 p-2 bg-slate-800 rounded-lg shadow opacity-50 cursor-not-allowed flex justify-center items-center text-lg">⬇️</button>`;
     }
     pagination.innerHTML = paginationHtml;
 }
@@ -295,8 +296,7 @@ window.renderEditorStepsList = function() {
         <div onclick="selectEditorStep(${i})" class="flex flex-col min-w-[140px] max-w-[140px] p-2 border-2 rounded-xl cursor-pointer transition-all ${isActive} shrink-0">
             <div class="flex justify-between items-center w-full mb-1">
                 <span class="text-xs"><b class="text-amber-500">${moveNum}. ${window.escapeHTML ? window.escapeHTML(s.san) : s.san}</b></span>
-                <!-- BUGFIX: escapeHTML on s.icon to prevent XSS -->
-                <img src="Visualization/${window.escapeHTML ? window.escapeHTML(s.icon) : s.icon}.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'">
+                <span style="font-size:0.85rem;line-height:1">${window.renderIcon ? window.renderIcon(s.icon) : (String(s.icon||'⚔️').replace(/<[^>]*>/g,''))}</span>
             </div>
             <div class="flex justify-between items-center w-full">
                 <span class="text-[10px] text-slate-400 truncate w-[70%]">${window.escapeHTML ? window.escapeHTML(s.title || '...') : (s.title || '...')}</span>
