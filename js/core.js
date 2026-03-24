@@ -77,10 +77,12 @@ window.renderIcon = function(iconData, cls) {
     if (!iconData) return '';
     // Strip any HTML tags to extract raw text (handles serialized span wrappers)
     const raw = String(iconData).replace(/<[^>]*>/g, '').trim();
-    // Real image path: only ASCII filename chars + known image extensions
-    const isRealFile = /^[a-zA-Z0-9_\-\/\.]+\.(png|jpg|jpeg|svg|webp|gif)$/i.test(raw);
+    // Real image path: only ASCII filename chars + optional known image extension
+    const isRealFile = /^[a-zA-Z0-9_\-\/]+(\.(png|jpg|jpeg|svg|webp|gif))?$/i.test(raw);
     if (isRealFile) {
-        const src = raw.startsWith('Visualization/') ? raw : 'Visualization/' + raw;
+        let src = raw;
+        if (!src.match(/\.[a-z]+$/i)) src += '.png';
+        if (!src.startsWith('Visualization/')) src = 'Visualization/' + src;
         return '<img src="' + src + '" class="' + (cls || 'w-6 h-6 object-contain') + '" onerror="this.style.display=\'none\'">';
     }
     // Emoji or text — safe span, never an <img>
